@@ -4,6 +4,7 @@
 
 import DB from "../../DB";
 import Todo from "../todo/Todo";
+import getTemplate from './template.js';
 
 export default class  {
     constructor(data){
@@ -20,6 +21,12 @@ export default class  {
     }
 
     render () {
-        console.table(this.todos);
+        this.elt.innerHTML = getTemplate(this);
+    }
+
+    renderNotCompletedTodoCount () {
+        this.todos.filter((todo) => !todo.completed).length;
+        
+        document.querySelector('.todo-count strong').innerText = this.todos.filter((todo) => !todo.completed).length;
     }
 }

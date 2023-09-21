@@ -1,4 +1,4 @@
-import '../style.scss'
+import '../styles.scss'
 
 import TodoList from './components/todoList/TodoList.js';
 
