@@ -1,4 +1,4 @@
-import './styles.scss';
+/* import './styles.scss';
 
 export default function (data) {
     return `
@@ -57,4 +57,4 @@ export default function (data) {
       </body>
     </html>
     `; 
-};
+}; */

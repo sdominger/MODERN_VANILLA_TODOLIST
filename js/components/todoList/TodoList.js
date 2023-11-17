@@ -91,22 +91,22 @@ export default class {
             /* console.log("adding el for " + newTodo.id);*/ 
             ul.tasks = this.todos;
             ul.addEventListener('dblclick', function(e) {
-                console.error("e = " + e.target.tagName);
+                // console.error("e = " + e.target.tagName);
                 if (e.target.tagName === 'LABEL') {
                 //$('#children').click(function(e) {e.stopPropagation()})
                     
                 const li = e.target.closest('li');
                 const id = li.dataset.id;
-                console.warn("dblclick " + id);
+                // console.warn("dblclick " + id);
                 const label = li.querySelector('label');
                 if (!label) {
-                    console.error("label caca");
+                    console.error("label kk");
                 }
             
                 const input = document.createElement('input');
                 input.classList.add('edit');
                 input.value = label.textContent;
-                console.log("value =" + input.value);
+                // console.log("value =" + input.value);
                 input.tasks = this.tasks;
 
             
@@ -114,7 +114,7 @@ export default class {
                 input.addEventListener('keyup', (event) => {
                     if (event.key === 'Enter') {
                         e.preventDefault();
-                        console.warn("Enter " + id);
+                        // console.warn("Enter " + id);
                         const newContent = event.srcElement.value;
                         if (newContent !== '') {
                             label.textContent = newContent;
@@ -123,8 +123,8 @@ export default class {
                             const id = li.dataset.id;
                             const task = this.tasks.find(task => task.id == id);
                             task.content = newContent;
-                            console.warn("Update " + id);
-                            DB.update(newTodo); // Update API
+                            // console.warn("Update " + id);
+                            DB.update(task, id); // Update API
                         }
                     event.srcElement.remove();
                     }
@@ -164,6 +164,7 @@ export default class {
 
         this.todos = this.todos.filter((t) => t.id != id); // remove todo from list
 
+        DB.delete(id);
         this.updateFooter();
         this.updateFilter();
     }
@@ -181,7 +182,7 @@ export default class {
         const newTodo = new TodoItem({
             id: newID, 
             li: undefined,
-            created_at: new Date(),
+            createdAt: new Date(),
             content: this.newTodoInput.value,
             completed: false
         });
@@ -192,7 +193,20 @@ export default class {
     }
 
     // Ajoute un TodoItem a la liste des taches et ajoute le html correspondant, en connectant les listeners.
-    add (newTodo, doUpload = true) {
+    async add (newTodo, doUpload = true) {
+        if (doUpload) {
+            console.log(JSON.stringify(newTodo));
+            let apiTodo = await DB.addOne(newTodo); // Attendre la résolution de la promesse
+            console.log(JSON.stringify(apiTodo));
+            if (apiTodo && apiTodo.id) {
+                newTodo.id = apiTodo.id; // Mettre à jour l'ID localement
+                console.log(JSON.stringify(newTodo));
+            } else {
+                console.error("Erreur lors de l'ajout de la tâche dans l'API.");
+                // Gérer les erreurs ou les cas où l'ID n'est pas retourné correctement
+            }    
+        }
+
         this.todos.unshift(newTodo);
 
         // Remplacement du contenu de <ul></ul>.
@@ -217,9 +231,7 @@ export default class {
         });
 
 
-        if (doUpload) {
-            DB.addOne(newTodo); // Update API
-        }
+
 
 
         this.updateFooter();
@@ -235,7 +247,7 @@ export default class {
     // Modifie les différents liens de filtres en fonction de celui actif.
     setActiveFilter(active) {
         this.filter = active;
-        console.log('active' + active );
+        // console.log('active' + active );
         
         let filtersIds = ["filter-all", "filter-active", "filter-completed"];
         filtersIds.forEach((element, index) => {
@@ -249,7 +261,7 @@ export default class {
     }
 
     updateFilter() {
-        console.log("updateFilter"+ this.filter);
+        // console.log("updateFilter"+ this.filter);
         if(this.filter == "filter-all") {
             this.filterTasks(true, true, true);
         } else if(this.filter == "filter-active") {
@@ -261,7 +273,7 @@ export default class {
 
     // Filtre les taches affichee en fonction du filtre actif, en utilisant l'attribut style.display des li pour les cacher ou non.
     filterTasks(all, active, completed) {
-        console.log("all " + all + " active " + active + " completed " + completed);
+        // console.log("all " + all + " active " + active + " completed " + completed);
         for(var idx in this.todos) {
             var t = this.todos[idx]
             if(!t) {
@@ -269,7 +281,7 @@ export default class {
             }
 
             let show = all || (completed && !t.completed) || (active && t.completed);
-            console.log(`filtering ${idx}: show = ${show}`);
+            // console.log(`filtering ${idx}: show = ${show}`);
             if(show) {
                 t.li.style.display = "";
             
