@@ -44,7 +44,27 @@ export default class {
         return await reponse.json();
     }
 
-    // Genere des tache (sans l'API) a des fins de test
+    // Supprimer de l'API
+    static async delete (id) {
+        const reponse = await fetch(this.apiURL + "/todos/" + id, {
+            method: 'Delete',
+            headers: {"Content-Type": "application/json"},
+        });
+        return await reponse.json();
+    }
+
+    // Mettre à jour dans l'API
+    static async update (data, id) {
+        const reponse = await fetch(this.apiURL + "/todos/" + id, {
+            method: 'PUT',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+        return await reponse.json();
+    }
+
+    // Genere des tache (sans l'API) a des fins de test 
+    /*
 static getDefaultTasks() {
     return [{
         id: "12938",  
@@ -74,6 +94,6 @@ static getDefaultTasks() {
         content: "Sleep :(",
         completed: false
     }];
-}
+} */
 }
 
